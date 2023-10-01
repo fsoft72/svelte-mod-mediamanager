@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import FilePreview from '$modules/mediamanager/components/FilePreview.svelte';
 	import ProgressBar from '$liwe3/components/ProgressBar.svelte';
 	import { url_and_headers } from '$liwe3/utils/fetcher';
@@ -7,12 +7,16 @@
 	import SelectTree from '$liwe3/components/SelectTree.svelte';
 	import { addToast } from '$liwe3/stores/ToastStore';
 	import Button from '$liwe3/components/Button.svelte';
+	import Select from 'svelte-select';
 
 	export let previewWidth: string = '200px';
 	export let previewHeight: string = '200px';
 	export let id_folder: string = 'root';
 
 	export let folders: TreeItem[] | null = null;
+	export let tags: string[] | null = null;
+
+	let sel_tags: { value: string; label: string }[] = [];
 
 	let files: File[] = [];
 	let currentFileIndex = 0;
@@ -22,6 +26,7 @@
 	let uploadProgress = 0;
 	let uploadName = '';
 	let isDragOver = false;
+	let tags_set: string[] = [];
 
 	const dispatch = createEventDispatcher();
 
@@ -60,6 +65,7 @@
 		const data = {
 			filename: file.name,
 			id_folder,
+			tags: tags_set,
 			size: file.size.toString()
 		};
 
@@ -156,6 +162,18 @@
 	const onTreeFolderChange = (e: any) => {
 		id_folder = e.detail.id;
 	};
+
+	const setTags = (e: CustomEvent<{ value: string; label: string }[]>) => {
+		const res: string[] = [];
+
+		e.detail.map((tag) => res.push(tag.value));
+
+		tags_set = res;
+	};
+
+	onMount(() => {
+		sel_tags = tags?.map((tag: string) => ({ value: tag, label: tag })) ?? [];
+	});
 </script>
 
 <!-- svelte-ignore a11y-interactive-supports-focus -->
@@ -169,14 +187,21 @@
 	on:drop={onDrop}
 	class:is-dragging-over={isDragOver}
 >
-	{#if folders}
-		<div class="folders-container">
-			Upload Folder: <SelectTree
-				name="id_folder"
-				bind:value={id_folder}
-				tree={folders}
-				on:change={onTreeFolderChange}
-			/>
+	{#if folders || tags?.length}
+		<div class="fields">
+			{#if folders}
+				<div class="folders-container">
+					Upload Folder: <SelectTree
+						name="id_folder"
+						bind:value={id_folder}
+						tree={folders}
+						on:change={onTreeFolderChange}
+					/>
+				</div>
+			{/if}
+			{#if sel_tags?.length}
+				<Select items={sel_tags} multiple on:change={setTags} />
+			{/if}
 		</div>
 	{/if}
 	<div class="container">
@@ -243,5 +268,9 @@
 		padding: 0.5em 0;
 
 		border-bottom: 1px solid var(--liwe-darker-secondary-color);
+	}
+
+	.fields {
+		padding: 0.2em 1em;
 	}
 </style>
