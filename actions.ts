@@ -20,15 +20,17 @@ import { get, patch, post, delete_ } from '$liwe3/utils/fetcher';
  * @param filename - Original filename [req]
  * @param size - Complete file size in bytes [req]
  * @param title - The media title [opt]
+ * @param tags - The media tags [opt]
  *
  * @return id_upload: str
  *
  */
-export const media_upload_chunk_start = async ( id_folder: string, filename: string, size: number, title?: string ) => {
+export const media_upload_chunk_start = async ( id_folder: string, filename: string, size: number, title?: string, tags?: string[] ) => {
 	const res = await post( `/api/media/upload/chunk/start`, { 
 		filename,
 		id_folder,
 		size,
+		tags,
 		title
 	 }, true );
 
