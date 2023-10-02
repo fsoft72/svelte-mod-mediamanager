@@ -292,3 +292,22 @@ export const media_search = async ( title?: string, name?: string, type?: string
 
 	return res.medias;
 };
+
+/**
+ * @param skip - The starting point [opt]
+ * @param rows - How many items to retrieve [opt]
+ *
+ * @return medias: Media
+ *
+ */
+export const media_get_latest = async ( skip: number = 0, rows: number = 50 ) => {
+	const res = await get( `/api/media/get/latest`, { skip, rows }, true );
+
+	if (res.error) return res;
+
+	/*=== f2c_start media_get_latest ===*/
+
+	/*=== f2c_end media_get_latest ===*/
+
+	return res.medias;
+};

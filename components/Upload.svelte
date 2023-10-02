@@ -31,6 +31,8 @@
 	const dispatch = createEventDispatcher();
 
 	async function uploadFiles() {
+		let totFiles = files.length;
+
 		while (currentFileIndex < files.length) {
 			uploadName = files[currentFileIndex].name;
 			uploadProgress = 0;
@@ -57,7 +59,7 @@
 			message: 'Files uploaded successfully'
 		});
 
-		dispatch('done');
+		dispatch('done', { files: totFiles });
 	}
 
 	async function handleFileUpload() {
