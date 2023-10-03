@@ -8,6 +8,7 @@
 	import { addToast } from '$liwe3/stores/ToastStore';
 	import Button from '$liwe3/components/Button.svelte';
 	import Select from 'svelte-select';
+	import TagInput from '$liwe3/components/TagInput.svelte';
 
 	export let previewWidth: string = '200px';
 	export let previewHeight: string = '200px';
@@ -15,8 +16,6 @@
 
 	export let folders: TreeItem[] | null = null;
 	export let tags: string[] | null = null;
-
-	let sel_tags: { value: string; label: string }[] = [];
 
 	let files: File[] = [];
 	let currentFileIndex = 0;
@@ -26,7 +25,7 @@
 	let uploadProgress = 0;
 	let uploadName = '';
 	let isDragOver = false;
-	let tags_set: string[] = [];
+	let tags_selected: string[] = [];
 
 	const dispatch = createEventDispatcher();
 
@@ -67,7 +66,7 @@
 		const data = {
 			filename: file.name,
 			id_folder,
-			tags: tags_set,
+			tags: tags_selected,
 			size: file.size.toString()
 		};
 
@@ -164,18 +163,6 @@
 	const onTreeFolderChange = (e: any) => {
 		id_folder = e.detail.id;
 	};
-
-	const setTags = (e: CustomEvent<{ value: string; label: string }[]>) => {
-		const res: string[] = [];
-
-		e.detail.map((tag) => res.push(tag.value));
-
-		tags_set = res;
-	};
-
-	onMount(() => {
-		sel_tags = tags?.map((tag: string) => ({ value: tag, label: tag })) ?? [];
-	});
 </script>
 
 <!-- svelte-ignore a11y-interactive-supports-focus -->
@@ -201,8 +188,11 @@
 					/>
 				</div>
 			{/if}
-			{#if sel_tags?.length}
-				<Select items={sel_tags} multiple on:change={setTags} />
+			{#if tags?.length}
+				<div class="folders-container">
+					Tags
+					<TagInput {tags} bind:selected={tags_selected} />
+				</div>
 			{/if}
 		</div>
 	{/if}
