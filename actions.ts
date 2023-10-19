@@ -311,3 +311,25 @@ export const media_get_latest = async ( skip: number = 0, rows: number = 50 ) =>
 
 	return res.medias;
 };
+
+/**
+ * Updates the media metadata
+ *
+ * @param id - Media id [req]
+ * @param title - Media title [opt]
+ * @param tags - Media tags [opt]
+ *
+ * @return media: Media
+ *
+ */
+export const media_meta_update = async ( id: string, title?: string, tags?: string[] ) => {
+	const res = await patch( `/api/media/meta/update`, { id, title, tags }, true );
+
+	if (res.error) return res;
+
+	/*=== f2c_start media_meta_update ===*/
+
+	/*=== f2c_end media_meta_update ===*/
+
+	return res.media;
+};
