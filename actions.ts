@@ -15,24 +15,27 @@ import { get, patch, post, delete_ } from '$liwe3/utils/fetcher';
  * This call will instruct the server to receive a new chunked file.
  * During this call you have to provide the original `filename` and the whole upload `size` in bytes.
  * The endpoint will return the `id_upload` that must be used for the next chunked transfer calls.
+ * If the payload contains the `anonymous` value, then the user doesn't need to be logged in to upload files.
  *
  * @param id_folder - The ID Folder where to upload the media [req]
  * @param filename - Original filename [req]
  * @param size - Complete file size in bytes [req]
  * @param title - The media title [opt]
  * @param tags - The media tags [opt]
+ * @param anonymous - If it is set, you don't need permissions [opt]
  *
  * @return id_upload: str
  *
  */
-export const media_upload_chunk_start = async ( id_folder: string, filename: string, size: number, title?: string, tags?: string[] ) => {
+export const media_upload_chunk_start = async ( id_folder: string, filename: string, size: number, title?: string, tags?: string[], anonymous?: string ) => {
 	const res = await post( `/api/media/upload/chunk/start`, { 
+		anonymous,
 		filename,
 		id_folder,
 		size,
 		tags,
 		title
-	 }, true );
+	 }, false );
 
 	if (res.error) return res;
 
@@ -57,7 +60,7 @@ export const media_upload_chunk_start = async ( id_folder: string, filename: str
  *
  */
 export const media_upload_chunk_add = async ( id_upload: string, start: number ) => {
-	const res = await post( `/api/media/upload/chunk/add?id_upload=${id_upload}&start=${start}`, {}, true );
+	const res = await post( `/api/media/upload/chunk/add?id_upload=${id_upload}&start=${start}`, {}, false );
 
 	if (res.error) return res;
 

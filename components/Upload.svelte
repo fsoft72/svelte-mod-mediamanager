@@ -9,6 +9,7 @@
 	import Button from '$liwe3/components/Button.svelte';
 	import Select from 'svelte-select';
 	import TagInput from '$liwe3/components/TagInput.svelte';
+	import md5 from '$liwe3/utils/md5';
 
 	export let previewWidth: string = '200px';
 	export let previewHeight: string = '200px';
@@ -16,6 +17,7 @@
 
 	export let folders: TreeItem[] | null = null;
 	export let tags: string[] | null = null;
+	export let anonymous: boolean = false;
 
 	let files: File[] = [];
 	let currentFileIndex = 0;
@@ -63,12 +65,16 @@
 
 	async function handleFileUpload() {
 		const file = files[currentFileIndex];
-		const data = {
+		const data: Record<string, any> = {
 			filename: file.name,
 			id_folder,
 			tags: tags_selected,
 			size: file.size.toString()
 		};
+
+		// if the anonymous flag is set, we need to generate a hash of the file
+		// and we call it anonymous so we can check it later from the server
+		if (anonymous) data['anonymous'] = md5(`${data.filename}${data.size}${data.id_folder}`);
 
 		const { url, headers } = url_and_headers(`/api/media/upload/chunk/start`, true);
 
