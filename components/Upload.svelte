@@ -86,7 +86,16 @@
 			headers
 		});
 
-		const { id_upload } = await response.json();
+		const { id_upload, error } = await response.json();
+
+		if (error) {
+			addToast({
+				type: 'error',
+				message: error
+			});
+			return;
+		}
+
 		await sendChunk(id_upload);
 	}
 
@@ -123,6 +132,10 @@
 			start += bytes;
 		}
 		uploadProgress = 100;
+		dispatch('completed', {
+			name: file.name,
+			id_upload
+		});
 	}
 
 	const onDragOver = (e: any) => {
