@@ -85,8 +85,8 @@
 		height: 100%;
 		width: 100%;
 
-		border: 1px solid var(--liwe-border-color);
-		border-radius: var(--liwe-border-radius);
+		border: 1px solid var(--liwe3-border-color);
+		border-radius: var(--liwe3-border-radius);
 		padding: 4px;
 	}
 </style>

@@ -53,7 +53,7 @@
 <style>
 	.container {
 		position: relative;
-		border: 1px solid var(--liwe-darker-secondary-color);
+		border: 1px solid var(--liwe3-darker-secondary-color);
 		border-radius: 0.2rem;
 		margin: 0.5rem;
 		display: flex;
@@ -95,6 +95,6 @@
 
 		width: 100%;
 
-		background-color: var(--liwe-darker-secondary-color);
+		background-color: var(--liwe3-darker-secondary-color);
 	}
 </style>

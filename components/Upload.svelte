@@ -242,7 +242,7 @@
 
 <style>
 	.upload-area {
-		border: 1px solid var(--liwe-darker-secondary-color);
+		border: 1px solid var(--liwe3-darker-secondary-color);
 		border-radius: 4px;
 	}
 
@@ -278,7 +278,7 @@
 
 		padding: 0.5em 0;
 
-		border-bottom: 1px solid var(--liwe-darker-secondary-color);
+		border-bottom: 1px solid var(--liwe3-darker-secondary-color);
 	}
 
 	.fields {

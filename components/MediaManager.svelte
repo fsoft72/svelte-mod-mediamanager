@@ -444,7 +444,7 @@
 											? CheckCircle
 											: EllipsisHorizontalCircle}
 										size="24"
-										style="color: var(--liwe-light-color)"
+										style="color: var(--liwe3-light-color)"
 									/>
 								</div>
 
@@ -519,7 +519,7 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		background-color: var(--liwe-paper-color);
+		background-color: var(--liwe3-paper-color);
 		height: 100vh;
 		z-index: 1002;
 
@@ -532,7 +532,7 @@
 		align-items: center;
 
 		padding: 0.2em 0.5em 0.2em 0.5em;
-		border-bottom: 1px solid var(--liwe-darker-secondary-color);
+		border-bottom: 1px solid var(--liwe3-darker-secondary-color);
 		margin-top: 0.2em;
 		margin-bottom: 0.4em;
 	}
@@ -555,8 +555,8 @@
 		padding: 0.5em;
 
 		margin-top: 5px;
-		background-color: var(--liwe-paper-color);
-		border: 1px solid var(--liwe-darker-secondary-color);
+		background-color: var(--liwe3-paper-color);
+		border: 1px solid var(--liwe3-darker-secondary-color);
 	}
 
 	.row {
@@ -598,7 +598,7 @@
 		width: 260px;
 		padding: 0.5em;
 
-		border: 1px solid var(--liwe-darker-secondary-color);
+		border: 1px solid var(--liwe3-darker-secondary-color);
 
 		box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.6);
 
@@ -607,7 +607,7 @@
 	}
 
 	.card {
-		border: 1px solid var(--liwe-darker-secondary-color);
+		border: 1px solid var(--liwe3-darker-secondary-color);
 		border-radius: 5px;
 
 		width: 300px;
@@ -664,7 +664,7 @@
 		flex-wrap: wrap;
 		gap: 0.5em;
 		font-size: 0.7em;
-		border-top: 1px solid var(--liwe-darker-secondary-color);
+		border-top: 1px solid var(--liwe3-darker-secondary-color);
 		padding: 0.5em;
 	}
 
@@ -673,7 +673,7 @@
 		justify-content: space-between;
 		align-items: center;
 
-		border-top: 1px solid var(--liwe-darker-secondary-color);
+		border-top: 1px solid var(--liwe3-darker-secondary-color);
 
 		font-size: 0.8em;
 		padding: 0.5em;
