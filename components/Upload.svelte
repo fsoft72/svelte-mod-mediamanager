@@ -5,7 +5,7 @@
 	import { url_and_headers } from '$liwe3/utils/fetcher';
 	import type { TreeItem } from '$liwe3/utils/tree';
 	import SelectTree from '$liwe3/components/SelectTree.svelte';
-	import { addToast } from '$liwe3/stores/ToastStore';
+	import { addToast } from '$liwe3/stores/ToastStore.svelte';
 	import Button from '$liwe3/components/Button.svelte';
 	import Select from 'svelte-select';
 	import TagInput from '$liwe3/components/TagInput.svelte';

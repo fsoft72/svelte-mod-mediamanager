@@ -34,7 +34,7 @@
 	import type { TreeItem } from '$liwe3/utils/tree';
 	import SimpleTree from '$liwe3/components/SimpleTree.svelte';
 	import FormCreator, { type FormField } from '$liwe3/components/FormCreator.svelte';
-	import { addToast } from '$liwe3/stores/ToastStore';
+	import { addToast } from '$liwe3/stores/ToastStore.svelte';
 
 	let search = '';
 
