@@ -42,7 +42,7 @@
 				name: uploadName,
 				progress: uploadProgress,
 				start: 0,
-				size: files[currentFileIndex].size
+				size: files[currentFileIndex].size,
 			});
 
 			await handleFileUpload();
@@ -57,7 +57,7 @@
 
 		addToast({
 			type: 'success',
-			message: 'Files uploaded successfully'
+			message: 'Files uploaded successfully',
 		});
 
 		dispatch('done', { files: totFiles });
@@ -69,21 +69,21 @@
 			filename: file.name,
 			id_folder,
 			tags: tags_selected,
-			size: file.size.toString()
+			size: file.size.toString(),
 		};
 
 		// if the anonymous flag is set, we need to generate a hash of the file
 		// and we call it anonymous so we can check it later from the server
 		if (anonymous) data['anonymous'] = md5(`${data.filename}${data.size}${data.id_folder}`);
 
-		const { url, headers } = url_and_headers(`/api/media/upload/chunk/start`, true);
+		const { url, headers } = url_and_headers(`/api/media/upload/chunk/start`);
 
 		headers['Content-Type'] = 'application/json';
 
 		const response = await fetch(url, {
 			method: 'POST',
 			body: JSON.stringify(data),
-			headers
+			headers,
 		});
 
 		const { id_upload, error } = await response.json();
@@ -91,7 +91,7 @@
 		if (error) {
 			addToast({
 				type: 'error',
-				message: error
+				message: error,
 			});
 			return;
 		}
@@ -104,7 +104,7 @@
 		const fileSize = file.size;
 		let start = 0;
 
-		const { url, headers } = url_and_headers(`/api/media/upload/chunk/add`, true);
+		const { url, headers } = url_and_headers(`/api/media/upload/chunk/add`);
 
 		headers['Content-Type'] = 'application/octet-stream';
 
@@ -115,7 +115,7 @@
 				name: uploadName,
 				progress: uploadProgress,
 				start: start,
-				size: fileSize
+				size: fileSize,
 			});
 
 			const end = Math.min(start + chunkSize, file.size);
@@ -125,7 +125,7 @@
 			const response = await fetch(`${url}?id_upload=${id_upload}&start=${start}&size=${size}`, {
 				method: 'POST',
 				body: chunk,
-				headers
+				headers,
 			});
 
 			const { bytes } = await response.json();
@@ -134,7 +134,7 @@
 		uploadProgress = 100;
 		dispatch('completed', {
 			name: file.name,
-			id_upload
+			id_upload,
 		});
 	}
 
