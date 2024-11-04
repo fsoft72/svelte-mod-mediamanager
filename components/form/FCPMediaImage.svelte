@@ -60,7 +60,7 @@
 	<Button
 		variant="link"
 		mode="success"
-		on:click={(e) => {
+		onclick={(e) => {
 			e.preventDefault();
 			showMediaManager = true;
 		}}
@@ -74,7 +74,7 @@
 </div>
 
 {#if showMediaManager}
-	<Modal title="Media Manager" size="lg" on:cancel={() => (showMediaManager = false)}>
+	<Modal title="Media Manager" size="lg" oncancel={() => (showMediaManager = false)}>
 		<MediaManager on:choose={onMediaChoose} />
 	</Modal>
 {/if}

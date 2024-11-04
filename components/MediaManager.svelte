@@ -278,8 +278,6 @@
 	};
 
 	onMount(async () => {
-		await user_init();
-
 		await tree_update();
 		await media_list_update();
 	});
