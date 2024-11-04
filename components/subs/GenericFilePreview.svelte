@@ -1,7 +1,11 @@
 <script lang="ts">
-	export let file: File;
-	export let previewWidth: string = '200px';
-	export let previewHeight: string = '200px';
+	interface Props {
+		file: File;
+		previewWidth?: string;
+		previewHeight?: string;
+	}
+
+	let { file, previewWidth = '200px', previewHeight = '200px' }: Props = $props();
 </script>
 
 <div class="content" style={`max-width: ${previewWidth}; max-height: ${previewHeight};`}>

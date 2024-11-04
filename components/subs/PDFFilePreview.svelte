@@ -1,9 +1,13 @@
 <script lang="ts">
-	export let file: File;
-	export let previewWidth: string = '200px';
-	export let previewHeight: string = '200px';
+	interface Props {
+		file: File;
+		previewWidth?: string;
+		previewHeight?: string;
+	}
 
-	let pdfUrl = '';
+	let { file, previewWidth = '200px', previewHeight = '200px' }: Props = $props();
+
+	let pdfUrl = $state('');
 
 	const reader = new FileReader();
 	reader.onload = () => {

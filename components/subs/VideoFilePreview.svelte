@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let file: File;
-	export let previewWidth: string = '200px';
-	export let previewHeight: string = '200px';
+	interface Props {
+		file: File;
+		previewWidth?: string;
+		previewHeight?: string;
+	}
 
-	let showVideo = false;
-	let video: HTMLVideoElement;
+	let { file, previewWidth = '200px', previewHeight = '200px' }: Props = $props();
+
+	let showVideo = $state(false);
+	let video: HTMLVideoElement | undefined = $state();
 
 	onMount(() => {
 		showVideo = true;
@@ -19,7 +23,7 @@
 </script>
 
 {#if showVideo}
-	<!-- svelte-ignore a11y-media-has-caption -->
+	<!-- svelte-ignore a11y_media_has_caption -->
 	<video
 		bind:this={video}
 		controls

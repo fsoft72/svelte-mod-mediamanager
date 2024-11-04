@@ -9,15 +9,18 @@
 	import MediaManager from '../MediaManager.svelte';
 	import Button from '$liwe3/components/Button.svelte';
 	import ImageContained from '$liwe3/components/ImageContained.svelte';
-	import { url_and_headers } from '$liwe3/utils/fetcher';
 
-	export let name: string = '';
-	export let value: string = '';
+	interface Props {
+		name?: string;
+		value?: string;
+	}
 
-	let media: Media;
-	let imgURL: string = '';
+	let { name = '', value = $bindable('') }: Props = $props();
 
-	let showMediaManager: boolean = false;
+	let media: Media | undefined = $state();
+	let imgURL: string = $state('');
+
+	let showMediaManager: boolean = $state(false);
 
 	const dispatch = createEventDispatcher();
 
@@ -43,13 +46,13 @@
 		_load_media();
 	});
 
-	$: {
+	$effect(() => {
 		if (media && media.id && media.filename) {
 			imgURL = media_url(media.id, media.filename);
 		} else {
 			imgURL = '';
 		}
-	}
+	});
 </script>
 
 <input type="hidden" {name} bind:value />

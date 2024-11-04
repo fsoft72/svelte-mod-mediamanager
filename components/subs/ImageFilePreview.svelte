@@ -1,13 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let file: File;
-	export let previewWidth: string = '200px';
-	export let previewHeight: string = '200px';
+	interface Props {
+		file: File;
+		previewWidth?: string;
+		previewHeight?: string;
+	}
 
-	let image: HTMLImageElement;
-	let title: string;
-	let showImage = false;
+	let { file, previewWidth = '200px', previewHeight = '200px' }: Props = $props();
+
+	let image: HTMLImageElement | undefined = $state();
+	let title: string = $derived(file.name);
+	let showImage = $state(false);
 
 	onMount(() => {
 		if (file) {
@@ -23,8 +27,6 @@
 		}
 		showImage = false;
 	});
-
-	$: title = file.name;
 </script>
 
 {#if showImage}

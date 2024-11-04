@@ -11,23 +11,33 @@
 	import TagInput from '$liwe3/components/TagInput.svelte';
 	import md5 from '$liwe3/utils/md5';
 
-	export let previewWidth: string = '200px';
-	export let previewHeight: string = '200px';
-	export let id_folder: string = 'root';
+	interface Props {
+		previewWidth?: string;
+		previewHeight?: string;
+		id_folder?: string;
+		folders?: TreeItem[] | null;
+		tags?: string[] | null;
+		anonymous?: boolean;
+	}
 
-	export let folders: TreeItem[] | null = null;
-	export let tags: string[] | null = null;
-	export let anonymous: boolean = false;
+	let {
+		previewWidth = '200px',
+		previewHeight = '200px',
+		id_folder = $bindable('root'),
+		folders = null,
+		tags = null,
+		anonymous = false
+	}: Props = $props();
 
-	let files: File[] = [];
+	let files: File[] = $state([]);
 	let currentFileIndex = 0;
 	let chunkSize = 1024 * 1024; // 1MB
-	let uploadField: HTMLInputElement;
+	let uploadField: HTMLInputElement | undefined = $state();
 
-	let uploadProgress = 0;
-	let uploadName = '';
-	let isDragOver = false;
-	let tags_selected: string[] = [];
+	let uploadProgress = $state(0);
+	let uploadName = $state('');
+	let isDragOver = $state(false);
+	let tags_selected: string[] = $state([]);
 
 	const dispatch = createEventDispatcher();
 
@@ -42,7 +52,7 @@
 				name: uploadName,
 				progress: uploadProgress,
 				start: 0,
-				size: files[currentFileIndex].size,
+				size: files[currentFileIndex].size
 			});
 
 			await handleFileUpload();
@@ -57,7 +67,7 @@
 
 		addToast({
 			type: 'success',
-			message: 'Files uploaded successfully',
+			message: 'Files uploaded successfully'
 		});
 
 		dispatch('done', { files: totFiles });
@@ -69,7 +79,7 @@
 			filename: file.name,
 			id_folder,
 			tags: tags_selected,
-			size: file.size.toString(),
+			size: file.size.toString()
 		};
 
 		// if the anonymous flag is set, we need to generate a hash of the file
@@ -83,7 +93,7 @@
 		const response = await fetch(url, {
 			method: 'POST',
 			body: JSON.stringify(data),
-			headers,
+			headers
 		});
 
 		const { id_upload, error } = await response.json();
@@ -91,7 +101,7 @@
 		if (error) {
 			addToast({
 				type: 'error',
-				message: error,
+				message: error
 			});
 			return;
 		}
@@ -115,7 +125,7 @@
 				name: uploadName,
 				progress: uploadProgress,
 				start: start,
-				size: fileSize,
+				size: fileSize
 			});
 
 			const end = Math.min(start + chunkSize, file.size);
@@ -125,7 +135,7 @@
 			const response = await fetch(`${url}?id_upload=${id_upload}&start=${start}&size=${size}`, {
 				method: 'POST',
 				body: chunk,
-				headers,
+				headers
 			});
 
 			const { bytes } = await response.json();
@@ -134,7 +144,7 @@
 		uploadProgress = 100;
 		dispatch('completed', {
 			name: file.name,
-			id_upload,
+			id_upload
 		});
 	}
 
@@ -184,15 +194,15 @@
 	};
 </script>
 
-<!-- svelte-ignore a11y-interactive-supports-focus -->
+<!-- svelte-ignore a11y_interactive_supports_focus -->
 <div
 	class="upload-area"
 	role="button"
 	aria-label="Upload files"
 	tabIndex="0"
-	on:dragover={onDragOver}
-	on:dragleave={onDragLeave}
-	on:drop={onDrop}
+	ondragover={onDragOver}
+	ondragleave={onDragLeave}
+	ondrop={onDrop}
 	class:is-dragging-over={isDragOver}
 >
 	{#if folders || tags?.length}
@@ -218,9 +228,9 @@
 	<div class="container">
 		<p>
 			Drag and drop files here or
-			<!-- svelte-ignore a11y-interactive-supports-focus -->
-			<!-- svelte-ignore a11y-invalid-attribute -->
-			<a href="#" on:click={() => uploadField.click()}>browse</a>
+			<!-- svelte-ignore a11y_interactive_supports_focus -->
+			<!-- svelte-ignore a11y_invalid_attribute -->
+			<a href="#" onclick={() => uploadField?.click()}>browse</a>
 		</p>
 		<div class="preview">
 			{#each files as file (file.name)}
@@ -230,7 +240,7 @@
 			{/each}
 		</div>
 		<div class="upload-field">
-			<input bind:this={uploadField} type="file" multiple on:change={onFilesSelected} />
+			<input bind:this={uploadField} type="file" multiple onchange={onFilesSelected} />
 		</div>
 		<Button disabled={files.length === 0} on:click={uploadFiles}>Upload</Button>
 	</div>

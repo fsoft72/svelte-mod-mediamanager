@@ -8,23 +8,21 @@
 	import GenericFilePreview from './subs/GenericFilePreview.svelte';
 	import { format_size } from '$liwe3/utils/utils';
 
-	export let file: File;
-	export let previewWidth: string = '200px';
-	export let previewHeight: string = '200px';
+	interface Props {
+		file: File;
+		previewWidth?: string;
+		previewHeight?: string;
+	}
 
-	let fileType: string = '';
+	let { file, previewWidth = '200px', previewHeight = '200px' }: Props = $props();
+
+	let fileType: string = $derived(file.type.split('/')[0]);
 
 	const dispatch = createEventDispatcher();
 
 	const onRemove = () => {
 		dispatch('remove', file);
 	};
-
-	$: {
-		const type = file.type.split('/')[0];
-
-		fileType = type;
-	}
 </script>
 
 <div class="container">

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	import Button from '$liwe3/components/Button.svelte';
@@ -36,23 +38,23 @@
 	import FormCreator, { type FormField } from '$liwe3/components/FormCreator.svelte';
 	import { addToast } from '$liwe3/stores/ToastStore.svelte';
 
-	let search = '';
+	let search = $state('');
 
-	let openFolders = false;
-	let openAssets = true;
-	let medias: Media[] = [];
-	let tree: TreeItem = { id: 'empty', name: 'empty', children: [] };
-	let id_folder: string = 'root';
-	let sidebarOpen = false;
-	let selectedCards: string[] = [];
+	let openFolders = $state(false);
+	let openAssets = $state(true);
+	let medias: Media[] = $state([]);
+	let tree: TreeItem = $state({ id: 'empty', name: 'empty', children: [] });
+	let id_folder: string = $state('root');
+	let sidebarOpen = $state(false);
+	let selectedCards: string[] = $state([]);
 
 	let listOfFolders: string[] = []; // this is the list of subfolders to query media for
 	let foldersMap: { [key: string]: TreeItem } = {};
 
-	let subfolders: TreeItem[] = [];
+	let subfolders: TreeItem[] = $derived(tree.children ?? []);
 
-	let showUpload = false;
-	let showNewFolder = false;
+	let showUpload = $state(false);
+	let showNewFolder = $state(false);
 
 	const dispatch = createEventDispatcher();
 
@@ -274,8 +276,6 @@
 		dispatch('choose', media);
 	};
 
-	$: subfolders = tree.children ?? [];
-
 	onMount(async () => {
 		await user_init();
 
@@ -287,13 +287,13 @@
 <div class="container">
 	{#if sidebarOpen}
 		<div class="sidebar">
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<div class="title">
 				Folders
 
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<div class="btn" on:click={() => (sidebarOpen = false)}>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div class="btn" onclick={() => (sidebarOpen = false)}>
 					<Icon src={XCircle} size="24" />
 				</div>
 			</div>
@@ -316,9 +316,9 @@
 			</Button>
 		</div>
 		<div class="actions-toolbar">
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<div class="btn" on:click={media_list_update}>
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class="btn" onclick={media_list_update}>
 				<Icon src={ArrowPath} size="24" />
 			</div>
 			<div class="row">
@@ -337,9 +337,9 @@
 		<!-- folders section -->
 		<div class="folders">
 			<div class="section-title">
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<div class="row" on:click={() => (openFolders = !openFolders)}>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div class="row" onclick={() => (openFolders = !openFolders)}>
 					<div class="btn">
 						{#if openFolders}
 							<Icon src={ChevronDown} size="24" />
@@ -364,12 +364,12 @@
 			{#if openFolders}
 				<div class="folders-data">
 					{#if id_folder !== 'root' && id_folder !== 'default-root'}
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<!-- svelte-ignore a11y-no-static-element-interactions -->
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
 							class="folder"
 							style="width: 40px"
-							on:click={() => _updateView(_getIdParent(id_folder))}
+							onclick={() => _updateView(_getIdParent(id_folder))}
 						>
 							<Icon src={ArrowUturnLeft} size="24" />
 						</div>
@@ -380,9 +380,9 @@
 					{/if}
 
 					{#each subfolders as subfolder (subfolder.id)}
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<!-- svelte-ignore a11y-no-static-element-interactions -->
-						<div class="folder" on:click={() => _updateView(subfolder.id)}>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<div class="folder" onclick={() => _updateView(subfolder.id)}>
 							<div class="btn">
 								<Icon src={Folder} size="24" />
 							</div>
@@ -396,9 +396,9 @@
 		<!-- assets -->
 		<div class="folders">
 			<div class="section-title">
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<div class="row" on:click={() => (openAssets = !openAssets)}>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div class="row" onclick={() => (openAssets = !openAssets)}>
 					<div class="btn">
 						{#if openAssets}
 							<Icon src={ChevronDown} size="24" />
@@ -436,9 +436,9 @@
 									true
 								)})`}
 							>
-								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<!-- svelte-ignore a11y-no-static-element-interactions -->
-								<div class="card-selector" on:click={() => selectCard(media.id ?? '')}>
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
+								<div class="card-selector" onclick={() => selectCard(media.id ?? '')}>
 									<Icon
 										src={media.id && selectedCards.includes(media.id)
 											? CheckCircle
