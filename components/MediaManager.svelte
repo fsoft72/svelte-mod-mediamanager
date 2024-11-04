@@ -51,7 +51,7 @@
 	let listOfFolders: string[] = []; // this is the list of subfolders to query media for
 	let foldersMap: { [key: string]: TreeItem } = {};
 
-	let subfolders: TreeItem[] = $derived(tree.children ?? []);
+	let subfolders: TreeItem[] = $state([]);
 
 	let showUpload = $state(false);
 	let showNewFolder = $state(false);
@@ -212,8 +212,9 @@
 		await media_list_update();
 	};
 
-	const folderSelected = (e: CustomEvent<{ selected: string[] }>) => {
-		_updateView(e.detail.selected[0].slice(1, -1));
+	const folderSelected = (data: any) => {
+		console.log('=== DEBUG: ', data);
+		_updateView(data[0].slice(1, -1));
 	};
 
 	const _updateView = (id_fold: string) => {
@@ -302,16 +303,16 @@
 				level={0}
 				multipleSelection={false}
 				fontSize="20"
-				on:select={folderSelected}
+				onselect={folderSelected}
 			/>
 		</div>
 	{/if}
 	<div class="main">
 		<div class="toolbar">
-			<Button on:click={() => (sidebarOpen = true)}><Icon src={FolderOpen} size="24" /></Button>
+			<Button onclick={() => (sidebarOpen = true)}><Icon src={FolderOpen} size="24" /></Button>
 			<Input bind:value={search} placeholder="Search..." />
 
-			<Button color="primary" size="md" variant="outline" on:click={() => (showUpload = true)}>
+			<Button color="primary" size="md" variant="outline" onclick={() => (showUpload = true)}>
 				Upload
 			</Button>
 		</div>
@@ -354,10 +355,10 @@
 				</div>
 				<div class="select-items">
 					{#if subfolders.length <= 0}
-						<Button size="sm" mode="danger" on:click={() => deleteFolder()}>Delete</Button>
+						<Button size="sm" mode="danger" onclick={() => deleteFolder()}>Delete</Button>
 					{/if}
 					{#if id_folder != 'root'}
-						<Button size="sm" on:click={() => (showNewFolder = true)}>New Folder</Button>
+						<Button size="sm" onclick={() => (showNewFolder = true)}>New Folder</Button>
 					{/if}
 				</div>
 			</div>
@@ -410,14 +411,13 @@
 				</div>
 				<div class="select-items">
 					Selected: {selectedCards.length} / {medias.length}
-					<Button size="sm" variant="outline" mode="primary" on:click={selectAll}>Select All</Button
-					>
-					<Button size="sm" variant="outline" mode="secondary" on:click={selectNone}>None</Button>
+					<Button size="sm" variant="outline" mode="primary" onclick={selectAll}>Select All</Button>
+					<Button size="sm" variant="outline" mode="secondary" onclick={selectNone}>None</Button>
 					<Button
 						size="sm"
 						variant="outline"
 						mode="danger"
-						on:click={() => deleteMedias()}
+						onclick={() => deleteMedias()}
 						disabled={selectedCards.length === 0}
 					>
 						Delete
@@ -449,7 +449,7 @@
 								</div>
 
 								<div class="card-action">
-									<Button size="xs" variant="solid" on:click={() => chooseMedia(media)}>
+									<Button size="xs" variant="solid" onclick={() => chooseMedia(media)}>
 										Choose
 									</Button>
 								</div>
@@ -486,11 +486,11 @@
 	<Modal
 		size="lg"
 		title="Upload Files"
-		on:cancel={() => (showUpload = false)}
+		oncancel={() => (showUpload = false)}
 		closeOnOutsideClick={false}
 		closeOnEsc={false}
 	>
-		<Upload bind:id_folder folders={tree.children} on:done={uploadDone} />
+		<Upload bind:id_folder folders={tree.children} ondone={uploadDone} />
 	</Modal>
 {/if}
 
@@ -498,11 +498,11 @@
 	<Modal
 		size="md"
 		title="New Folder"
-		on:cancel={() => (showNewFolder = false)}
+		oncancel={() => (showNewFolder = false)}
 		closeOnOutsideClick={true}
 		closeOnEsc={true}
 	>
-		<FormCreator fields={newFolderFields} on:submit={(e) => createNewFolder(e.detail)} />
+		<FormCreator fields={newFolderFields} onsubmit={(e) => createNewFolder(e.detail)} />
 	</Modal>
 {/if}
 
@@ -511,7 +511,7 @@
 		display: flex;
 		position: relative;
 
-		border: 1px solid #bbb;
+		border: 1px solid var(--liwe3-border-color);
 	}
 
 	.sidebar {
@@ -519,7 +519,7 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		background-color: var(--liwe3-paper-color);
+		background-color: var(--liwe3-paper);
 		height: 100vh;
 		z-index: 1002;
 
@@ -555,7 +555,7 @@
 		padding: 0.5em;
 
 		margin-top: 5px;
-		background-color: var(--liwe3-paper-color);
+		background-color: var(--liwe3-paper);
 		border: 1px solid var(--liwe3-darker-secondary-color);
 	}
 
