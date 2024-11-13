@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	import Button from '$liwe3/components/Button.svelte';
 	import Input from '$liwe3/components/Input.svelte';

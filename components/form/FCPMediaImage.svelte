@@ -13,16 +13,16 @@
 	interface Props {
 		name?: string;
 		value?: string;
+
+		onchange?: (name: string, value: string) => void;
 	}
 
-	let { name = '', value = $bindable('') }: Props = $props();
+	let { name = '', value = $bindable(''), onchange }: Props = $props();
 
 	let media: Media | undefined = $state();
 	let imgURL: string = $state('');
 
 	let showMediaManager: boolean = $state(false);
-
-	const dispatch = createEventDispatcher();
 
 	const _load_media = async () => {
 		if (!value) return;
@@ -34,12 +34,11 @@
 		media = res;
 	};
 
-	const onMediaChoose = (e: CustomEvent) => {
-		media = e.detail;
+	const onMediaChoose = (media: Media) => {
 		value = media.id ?? '';
 		showMediaManager = false;
 
-		dispatch('change', value);
+		onchange && onchange(name, value);
 	};
 
 	onMount(async () => {
@@ -75,7 +74,7 @@
 
 {#if showMediaManager}
 	<Modal title="Media Manager" size="lg" oncancel={() => (showMediaManager = false)}>
-		<MediaManager on:choose={onMediaChoose} />
+		<MediaManager onchoose={onMediaChoose} />
 	</Modal>
 {/if}
 
