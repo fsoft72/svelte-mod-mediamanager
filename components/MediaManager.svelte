@@ -228,7 +228,8 @@
 		media_list_update();
 	};
 
-	const createNewFolder = async (data: { folder: string }) => {
+	const createNewFolder = async (data: Record<string, any>) => {
+		console.log('=== CREATE: ', data);
 		const res = await media_folder_create(id_folder, data.folder);
 
 		if (res.error) {
@@ -276,6 +277,14 @@
 
 	const chooseMedia = (media: Media) => {
 		onchoose && onchoose(media);
+	};
+
+	const filteredMedias = (medias: Media[]) => {
+		return medias.filter((media) => {
+			if (!search) return true;
+
+			return (media.name ?? '').toLowerCase().includes(search.toLowerCase());
+		});
 	};
 
 	onMount(async () => {
@@ -423,7 +432,7 @@
 			</div>
 			{#if openAssets}
 				<div class="assets-data">
-					{#each medias as media (media.id)}
+					{#each filteredMedias(medias) as media (media.id)}
 						<div class="card">
 							<div
 								class="image"
@@ -497,7 +506,7 @@
 		closeOnOutsideClick={true}
 		closeOnEsc={true}
 	>
-		<FormCreator fields={newFolderFields} onsubmit={(e) => createNewFolder(e.detail)} />
+		<FormCreator fields={newFolderFields} onsubmit={createNewFolder} />
 	</Modal>
 {/if}
 
@@ -582,9 +591,10 @@
 	}
 
 	.assets-data {
-		height: calc(100vh - 340px);
+		/* height: calc(100vh - 340px); */
 
 		overflow-y: scroll;
+		padding-bottom: 2em;
 	}
 
 	.folder {
@@ -607,7 +617,7 @@
 		border-radius: 5px;
 
 		width: 300px;
-		height: 330px;
+		height: 310px;
 
 		box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.6);
 

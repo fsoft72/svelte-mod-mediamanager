@@ -192,8 +192,7 @@
 		files = _add_files(Array.from(e.target.files));
 	};
 
-	const onRemove = (e: any) => {
-		const file = e.detail;
+	const onRemove = (file: File) => {
 		const newFiles = files.filter((f) => f.name !== file.name);
 
 		files = newFiles;
@@ -245,7 +244,7 @@
 		<div class="preview">
 			{#each files as file (file.name)}
 				<div class="file">
-					<FilePreview {file} on:remove={onRemove} {previewHeight} {previewWidth} />
+					<FilePreview {file} onremove={onRemove} {previewHeight} {previewWidth} />
 				</div>
 			{/each}
 		</div>
