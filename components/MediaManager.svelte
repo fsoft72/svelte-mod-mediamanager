@@ -32,11 +32,16 @@
 	} from '../actions';
 	import type { Media, MediaTreeItem } from '../types';
 	import { format_size, media_url } from '$liwe3/utils/utils';
-	import { user_init } from '$modules/user/actions';
 	import type { TreeItem } from '$liwe3/utils/tree';
 	import SimpleTree from '$liwe3/components/SimpleTree.svelte';
 	import FormCreator, { type FormField } from '$liwe3/components/FormCreator.svelte';
 	import { addToast } from '$liwe3/stores/ToastStore.svelte';
+
+	interface Props {
+		onchoose?: (media: Media) => void;
+	}
+
+	let { onchoose }: Props = $props();
 
 	let search = $state('');
 
@@ -55,8 +60,6 @@
 
 	let showUpload = $state(false);
 	let showNewFolder = $state(false);
-
-	const dispatch = createEventDispatcher();
 
 	const newFolderFields: FormField[] = [
 		{
@@ -181,8 +184,6 @@
 		} else {
 			selectedCards.push(id);
 		}
-
-		selectedCards = selectedCards;
 	};
 
 	const selectAll = () => {
@@ -274,7 +275,7 @@
 	};
 
 	const chooseMedia = (media: Media) => {
-		dispatch('choose', media);
+		onchoose && onchoose(media);
 	};
 
 	onMount(async () => {
@@ -310,9 +311,7 @@
 			<Button onclick={() => (sidebarOpen = true)}><Icon src={FolderOpen} size="24" /></Button>
 			<Input bind:value={search} placeholder="Search..." />
 
-			<Button color="primary" size="md" variant="outline" onclick={() => (showUpload = true)}>
-				Upload
-			</Button>
+			<Button color="primary" size="md" onclick={() => (showUpload = true)}>Upload</Button>
 		</div>
 		<div class="actions-toolbar">
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -409,8 +408,8 @@
 				</div>
 				<div class="select-items">
 					Selected: {selectedCards.length} / {medias.length}
-					<Button size="sm" variant="outline" mode="primary" onclick={selectAll}>Select All</Button>
-					<Button size="sm" variant="outline" mode="secondary" onclick={selectNone}>None</Button>
+					<Button size="sm" mode="primary" onclick={selectAll}>Select All</Button>
+					<Button size="sm" mode="secondary" onclick={selectNone}>None</Button>
 					<Button
 						size="sm"
 						variant="outline"
@@ -442,14 +441,12 @@
 											? CheckCircle
 											: EllipsisHorizontalCircle}
 										size="24"
-										style="color: var(--liwe3-light-color)"
+										style="color: var(--liwe3-primary-color)"
 									/>
 								</div>
 
 								<div class="card-action">
-									<Button size="xs" variant="solid" onclick={() => chooseMedia(media)}>
-										Choose
-									</Button>
+									<Button size="xs" onclick={() => chooseMedia(media)}>Choose</Button>
 								</div>
 							</div>
 							<div class="title">{media.name}</div>
@@ -510,6 +507,7 @@
 		position: relative;
 
 		border: 1px solid var(--liwe3-border-color);
+		background-color: var(--liwe3-paper);
 	}
 
 	.sidebar {

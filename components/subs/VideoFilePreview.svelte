@@ -16,7 +16,7 @@
 		showVideo = true;
 		const reader = new FileReader();
 		reader.addEventListener('load', function () {
-			video.setAttribute('src', reader.result as string);
+			video!.setAttribute('src', reader.result as string);
 		});
 		reader.readAsDataURL(file);
 	});

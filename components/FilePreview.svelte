@@ -12,22 +12,24 @@
 		file: File;
 		previewWidth?: string;
 		previewHeight?: string;
+
+		onremove?: (file: File) => void;
 	}
 
-	let { file, previewWidth = '200px', previewHeight = '200px' }: Props = $props();
+	let { file, onremove, previewWidth = '200px', previewHeight = '200px' }: Props = $props();
 
 	let fileType: string = $derived(file.type.split('/')[0]);
 
 	const dispatch = createEventDispatcher();
 
 	const onRemove = () => {
-		dispatch('remove', file);
+		onremove && onremove(file);
 	};
 </script>
 
 <div class="container">
 	<div class="remove">
-		<Button mode="danger" size="xs" on:click={onRemove}>X</Button>
+		<Button mode="danger" size="xs" onclick={onRemove}>X</Button>
 	</div>
 	<div class="content">
 		{#if fileType === 'image'}

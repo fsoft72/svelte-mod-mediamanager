@@ -19,7 +19,7 @@
 
 			const reader = new FileReader();
 			reader.addEventListener('load', function () {
-				image.setAttribute('src', reader.result as string);
+				image!.setAttribute('src', reader.result as string);
 			});
 			reader.readAsDataURL(file);
 

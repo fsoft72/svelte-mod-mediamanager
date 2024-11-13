@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
 	import FilePreview from '$modules/mediamanager/components/FilePreview.svelte';
 	import ProgressBar from '$liwe3/components/ProgressBar.svelte';
 	import { url_and_headers } from '$liwe3/utils/fetcher';
@@ -7,9 +6,15 @@
 	import SelectTree from '$liwe3/components/SelectTree.svelte';
 	import { addToast } from '$liwe3/stores/ToastStore.svelte';
 	import Button from '$liwe3/components/Button.svelte';
-	import Select from 'svelte-select';
 	import TagInput from '$liwe3/components/TagInput.svelte';
 	import md5 from '$liwe3/utils/md5';
+
+	interface UpdateEvent {
+		name: string;
+		progress: number;
+		start: number;
+		size: number;
+	}
 
 	interface Props {
 		previewWidth?: string;
@@ -18,6 +23,10 @@
 		folders?: TreeItem[] | null;
 		tags?: string[] | null;
 		anonymous?: boolean;
+
+		onupdate?: (evt: UpdateEvent) => void;
+		ondone?: (files: number) => void;
+		oncompleted?: (name: string, id_upload: string) => void;
 	}
 
 	let {
@@ -26,7 +35,10 @@
 		id_folder = $bindable('root'),
 		folders = null,
 		tags = null,
-		anonymous = false
+		anonymous = false,
+		onupdate,
+		ondone,
+		oncompleted
 	}: Props = $props();
 
 	let files: File[] = $state([]);
@@ -39,21 +51,21 @@
 	let isDragOver = $state(false);
 	let tags_selected: string[] = $state([]);
 
-	const dispatch = createEventDispatcher();
-
 	async function uploadFiles() {
+		console.log('=== UPLOAD FILES: ', files.length);
 		let totFiles = files.length;
 
 		while (currentFileIndex < files.length) {
 			uploadName = files[currentFileIndex].name;
 			uploadProgress = 0;
 
-			dispatch('update', {
-				name: uploadName,
-				progress: uploadProgress,
-				start: 0,
-				size: files[currentFileIndex].size
-			});
+			onupdate &&
+				onupdate({
+					name: uploadName,
+					progress: uploadProgress,
+					start: 0,
+					size: files[currentFileIndex].size
+				});
 
 			await handleFileUpload();
 			currentFileIndex++;
@@ -70,7 +82,7 @@
 			message: 'Files uploaded successfully'
 		});
 
-		dispatch('done', { files: totFiles });
+		ondone && ondone(totFiles);
 	}
 
 	async function handleFileUpload() {
@@ -121,12 +133,13 @@
 		while (start < fileSize) {
 			uploadProgress = Math.round((start / fileSize) * 100);
 
-			dispatch('update', {
-				name: uploadName,
-				progress: uploadProgress,
-				start: start,
-				size: fileSize
-			});
+			onupdate &&
+				onupdate({
+					name: uploadName,
+					progress: uploadProgress,
+					start: start,
+					size: fileSize
+				});
 
 			const end = Math.min(start + chunkSize, file.size);
 			const size = end - start;
@@ -142,10 +155,7 @@
 			start += bytes;
 		}
 		uploadProgress = 100;
-		dispatch('completed', {
-			name: file.name,
-			id_upload
-		});
+		oncompleted && oncompleted(file.name, id_upload);
 	}
 
 	const onDragOver = (e: any) => {
@@ -189,8 +199,8 @@
 		files = newFiles;
 	};
 
-	const onTreeFolderChange = (e: any) => {
-		id_folder = e.detail.id;
+	const onTreeFolderChange = (new_id_folder: string) => {
+		id_folder = new_id_folder;
 	};
 </script>
 
@@ -212,8 +222,8 @@
 					Upload Folder: <SelectTree
 						name="id_folder"
 						bind:value={id_folder}
-						tree={folders}
-						on:change={onTreeFolderChange}
+						tree={{ children: folders }}
+						onchange={onTreeFolderChange}
 					/>
 				</div>
 			{/if}
@@ -242,7 +252,7 @@
 		<div class="upload-field">
 			<input bind:this={uploadField} type="file" multiple onchange={onFilesSelected} />
 		</div>
-		<Button disabled={files.length === 0} on:click={uploadFiles}>Upload</Button>
+		<Button disabled={files.length === 0} onclick={uploadFiles}>Upload</Button>
 	</div>
 	{#if uploadProgress > 0}
 		<p>{uploadName} - {uploadProgress}%</p>
