@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
 	import Modal from '$liwe3/components/Modal.svelte';
 	import { media_url } from '$liwe3/utils/utils';
 	import { media_get } from '$modules/mediamanager/actions';
@@ -9,15 +7,21 @@
 	import MediaManager from '../MediaManager.svelte';
 	import Button from '$liwe3/components/Button.svelte';
 	import ImageContained from '$liwe3/components/ImageContained.svelte';
+	import type { FormField } from '$liwe3/components/FormCreator.svelte';
 
 	interface Props {
+		field: FormField;
 		name?: string;
 		value?: string;
 
-		onchange?: (name: string, value: string) => void;
+		// dependency injection
+		_v: (field: FormField) => any;
+
+		// events
+		onchange: (name: string, value: any, field: FormField) => void;
 	}
 
-	let { name = '', value = $bindable(''), onchange }: Props = $props();
+	let { field, name = '', value = $bindable(''), onchange }: Props = $props();
 
 	let media: Media | undefined = $state();
 	let imgURL: string = $state('');
@@ -38,7 +42,7 @@
 		value = media.id ?? '';
 		showMediaManager = false;
 
-		onchange && onchange(name, value);
+		onchange && onchange(name, value, field);
 	};
 
 	onMount(async () => {
