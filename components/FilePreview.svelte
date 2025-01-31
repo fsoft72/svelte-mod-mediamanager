@@ -27,7 +27,7 @@
 	};
 </script>
 
-<div class="container">
+<div class="filepreview-container">
 	<div class="remove">
 		<Button mode="danger" size="xs" onclick={onRemove}>X</Button>
 	</div>
@@ -51,7 +51,7 @@
 </div>
 
 <style>
-	.container {
+	.filepreview-container {
 		position: relative;
 		border: 1px solid var(--liwe3-darker-secondary-color);
 		border-radius: 0.2rem;
@@ -63,7 +63,7 @@
 
 		box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
 
-		height: 200px;
+		/*height: 200px;*/
 	}
 
 	.content {
