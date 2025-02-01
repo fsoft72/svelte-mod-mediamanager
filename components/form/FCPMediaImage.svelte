@@ -1,3 +1,11 @@
+<script module>
+	export type MediaManagerItem = {
+		id: string;
+		filename: string;
+		mimetype: string;
+	};
+</script>
+
 <script lang="ts">
 	import Modal from '$liwe3/components/Modal.svelte';
 	import { media_url } from '$liwe3/utils/utils';
@@ -12,7 +20,7 @@
 	interface Props {
 		field: FormField;
 		name?: string;
-		value?: string;
+		value?: string | MediaManagerItem;
 
 		// dependency injection
 		_v: (field: FormField) => any;
@@ -31,7 +39,9 @@
 	const _load_media = async () => {
 		if (!value) return;
 
-		const res = await media_get(value);
+		const v = (value as MediaManagerItem).id ?? value;
+
+		const res = await media_get(v);
 
 		if (res.error) return;
 
