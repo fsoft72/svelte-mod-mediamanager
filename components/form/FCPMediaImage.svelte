@@ -39,10 +39,15 @@
 	};
 
 	const onMediaChoose = (media: Media) => {
+		if (!media) return;
+
 		value = media.id ?? '';
+
 		showMediaManager = false;
 
-		onchange && onchange(name, value, field);
+		const v = { id: media.id, filename: media.filename, type: media.mimetype };
+
+		onchange && onchange(name, v, field);
 	};
 
 	onMount(async () => {
