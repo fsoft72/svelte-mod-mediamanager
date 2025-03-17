@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
 	import Button from '$liwe3/components/Button.svelte';
 	import ImageFilePreview from './subs/ImageFilePreview.svelte';
 	import PDFFilePreview from './subs/PDFFilePreview.svelte';
@@ -19,8 +17,6 @@
 	let { file, onremove, previewWidth = '200px', previewHeight = '200px' }: Props = $props();
 
 	let fileType: string = $derived(file.type.split('/')[0]);
-
-	const dispatch = createEventDispatcher();
 
 	const onRemove = () => {
 		onremove && onremove(file);
