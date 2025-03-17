@@ -24,6 +24,8 @@
 		tags?: string[] | null;
 		anonymous?: boolean;
 
+		showUploadButton?: boolean;
+
 		onupdate?: (evt: UpdateEvent) => void;
 		ondone?: (files: number) => void;
 		oncompleted?: (name: string, id_upload: string) => void;
@@ -36,6 +38,7 @@
 		folders = null,
 		tags = null,
 		anonymous = false,
+		showUploadButton = true, // Added new property for controlling the upload button visibility
 		onupdate,
 		ondone,
 		oncompleted
@@ -51,8 +54,9 @@
 	let isDragOver = $state(false);
 	let tags_selected: string[] = $state([]);
 
-	async function uploadFiles() {
-		console.log('=== UPLOAD FILES: ', files.length);
+	export async function submit() {
+		if (files.length === 0) return;
+
 		let totFiles = files.length;
 
 		while (currentFileIndex < files.length) {
@@ -251,7 +255,9 @@
 		<div class="upload-field">
 			<input bind:this={uploadField} type="file" multiple onchange={onFilesSelected} />
 		</div>
-		<Button disabled={files.length === 0} onclick={uploadFiles}>Upload</Button>
+		{#if showUploadButton}
+			<Button disabled={files.length === 0} onclick={submit}>Upload</Button>
+		{/if}
 	</div>
 	{#if uploadProgress > 0}
 		<p>{uploadName} - {uploadProgress}%</p>
