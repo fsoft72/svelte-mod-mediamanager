@@ -1,22 +1,11 @@
-<script module>
-	export type MediaManagerItem = {
-		id: string;
-		filename: string;
-		mimetype: string;
-	};
-</script>
-
 <script lang="ts">
-	import Modal from '$liwe3/components/Modal.svelte';
 	import { media_url } from '$liwe3/utils/utils';
 	import { media_get } from '$modules/mediamanager/actions';
 	import type { Media } from '$modules/mediamanager/types';
 	import { onMount } from 'svelte';
-	import MediaManager from '../MediaManager.svelte';
-	import Button from '$liwe3/components/Button.svelte';
-	import ImageContained from '$liwe3/components/ImageContained.svelte';
 	import type { FormField } from '$liwe3/components/FormCreator.svelte';
 	import Upload from '../Upload.svelte';
+	import { type MediaManagerItem } from './FCPMediaImage.svelte';
 
 	interface Props {
 		field: FormField;
@@ -34,8 +23,20 @@
 
 	let media: Media | undefined = $state();
 	let imgURL: string = $state('');
+	let upload: any;
 
-	let showMediaManager: boolean = $state(false);
+	export const submit = async () => {
+		if (!upload) return;
+
+		const res = await upload.submit();
+
+		if (res && res.length > 0) {
+			media = res[0];
+			onchange(name, res, field);
+		}
+
+		return true;
+	};
 
 	const _load_media = async () => {
 		if (!value) return;
@@ -47,18 +48,6 @@
 		if (res.error) return;
 
 		media = res;
-	};
-
-	const onMediaChoose = (media: Media) => {
-		if (!media) return;
-
-		value = media.id ?? '';
-
-		showMediaManager = false;
-
-		const v = { id: media.id, filename: media.filename, type: media.mimetype };
-
-		onchange && onchange(name, v, field);
 	};
 
 	onMount(async () => {
@@ -76,7 +65,7 @@
 
 <input type="hidden" {name} bind:value />
 <div class="fcp-upload-cont">
-	<Upload showUploadButton={false} />
+	<Upload bind:this={upload} showUploadButton={false} />
 </div>
 
 <style>

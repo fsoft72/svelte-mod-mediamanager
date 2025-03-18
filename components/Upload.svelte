@@ -25,6 +25,7 @@
 		anonymous?: boolean;
 
 		showUploadButton?: boolean;
+		maxFiles?: number;
 
 		onupdate?: (evt: UpdateEvent) => void;
 		ondone?: (files: number) => void;
@@ -38,6 +39,7 @@
 		folders = null,
 		tags = null,
 		anonymous = false,
+		maxFiles = 0,
 		showUploadButton = true, // Added new property for controlling the upload button visibility
 		onupdate,
 		ondone,
@@ -49,15 +51,25 @@
 	let chunkSize = 1024 * 1024; // 1MB
 	let uploadField: HTMLInputElement | undefined = $state();
 
+	type UploadedFile = {
+		id: string;
+		filename: string;
+		type: string;
+	};
+
 	let uploadProgress = $state(0);
 	let uploadName = $state('');
 	let isDragOver = $state(false);
 	let tags_selected: string[] = $state([]);
+	let uploadedFiles: UploadedFile[] = $state([]); // Updated to use the UploadedFile type
 
 	export async function submit() {
-		if (files.length === 0) return;
+		if (files.length === 0) {
+			throw new Error('No files to upload');
+		}
 
 		let totFiles = files.length;
+		uploadedFiles = []; // reset uploaded file IDs
 
 		while (currentFileIndex < files.length) {
 			uploadName = files[currentFileIndex].name;
@@ -71,7 +83,8 @@
 					size: files[currentFileIndex].size
 				});
 
-			await handleFileUpload();
+			const uploadResult = await handleFileUpload();
+			if (uploadResult) uploadedFiles.push(uploadResult);
 			currentFileIndex++;
 		}
 
@@ -87,6 +100,8 @@
 		});
 
 		ondone && ondone(totFiles);
+
+		return uploadedFiles; // return the list of uploaded file IDs
 	}
 
 	async function handleFileUpload() {
@@ -119,10 +134,15 @@
 				type: 'error',
 				message: error
 			});
-			return;
+			return null;
 		}
 
 		await sendChunk(id_upload);
+		return {
+			id: id_upload,
+			filename: file.name,
+			type: file.type
+		};
 	}
 
 	async function sendChunk(id_upload: string) {
@@ -173,16 +193,41 @@
 	};
 
 	const _add_files = (_files: File[]) => {
-		// add files to existing files
-		// only add files that are not already in the list
+		// First check if we're already at or above the max limit
+		if (maxFiles > 0 && files.length >= maxFiles) {
+			addToast({
+				type: 'error',
+				message: `Maximum of ${maxFiles} file${maxFiles === 1 ? '' : 's'} allowed`
+			});
+			return files;
+		}
 
-		_files.forEach((_file: File) => {
-			if (!files.find((file: File) => file.name === _file.name)) {
-				files.push(_file);
+		// Calculate how many more files we can add
+		const remainingSlots = maxFiles > 0 ? maxFiles - files.length : _files.length + 100;
+
+		// Clone the current files array
+		const updatedFiles = [...files];
+		let addedCount = 0;
+
+		// Only process files up to the remaining slots
+		for (let i = 0; i < _files.length && (maxFiles === 0 || addedCount < remainingSlots); i++) {
+			const _file = _files[i];
+			// Only add if file not already in the list
+			if (!updatedFiles.find((file: File) => file.name === _file.name)) {
+				updatedFiles.push(_file);
+				addedCount++;
 			}
-		});
+		}
 
-		return files;
+		// Show message if files were skipped due to limit
+		if (maxFiles > 0 && _files.length > remainingSlots) {
+			addToast({
+				type: 'info',
+				message: `Only added ${addedCount} file(s). Maximum limit of ${maxFiles} file${maxFiles === 1 ? '' : 's'} reached.`
+			});
+		}
+
+		return updatedFiles;
 	};
 
 	const onDrop = (e: any) => {
@@ -241,9 +286,7 @@
 	<div class="container">
 		<p>
 			Drag and drop files here or
-			<!-- svelte-ignore a11y_interactive_supports_focus -->
-			<!-- svelte-ignore a11y_invalid_attribute -->
-			<a href="#" onclick={() => uploadField?.click()}>browse</a>
+			<button onclick={() => uploadField?.click()} class="btn btn-link">browse</button>
 		</p>
 		<div class="preview">
 			{#each files as file (file.name)}
