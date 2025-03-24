@@ -101,3 +101,29 @@ export interface MediaTreeItem {
 	subfolders: MediaTreeItem[];
 }
 
+/** MediaBase */
+export interface MediaBase {
+	/** the main id field */
+	id?: string;
+	/** Media title */
+	title?: string;
+	/** The file mimetype  */
+	mimetype?: string;
+	/** The uploaded filename  */
+	filename?: string;
+	/** File size in bytes */
+	size?: number;
+	/** File Extension  */
+	ext?: string;
+	/** Latitude */
+	lat?: string;
+	/** Longitude */
+	lng?: string;
+	/** Width in pixels */
+	width?: number;
+	/** Height in pixels */
+	height?: number;
+	/** If a photo is vertical or horizontal */
+	orientation?: number;
+}
+

@@ -7,7 +7,7 @@
 
 /*=== f2c_end __file ===*/
 
-import { get, patch, post, delete_ } from '$liwe3/utils/fetcher';
+import { get, patch, post, delete_, type LiWEFetcherOptions } from '$liwe3/utils/fetcher';
 
 /**
  * Use this to start a new chunked upload.
@@ -27,7 +27,7 @@ import { get, patch, post, delete_ } from '$liwe3/utils/fetcher';
  * @return id_upload: str
  *
  */
-export const media_upload_chunk_start = async ( id_folder: string, filename: string, size: number, title?: string, tags?: string[], anonymous?: string ) => {
+export const media_upload_chunk_start = async ( id_folder: string, filename: string, size: number, title?: string, tags?: string[], anonymous?: string, _options?: LiWEFetcherOptions ) => {
 	const res = await post( `/api/media/upload/chunk/start`, { 
 		anonymous,
 		filename,
@@ -35,7 +35,7 @@ export const media_upload_chunk_start = async ( id_folder: string, filename: str
 		size,
 		tags,
 		title
-	 }, false );
+	 }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -59,8 +59,8 @@ export const media_upload_chunk_start = async ( id_folder: string, filename: str
  * @return bytes: int
  *
  */
-export const media_upload_chunk_add = async ( id_upload: string, start: number ) => {
-	const res = await post( `/api/media/upload/chunk/add?id_upload=${id_upload}&start=${start}`, {}, false );
+export const media_upload_chunk_add = async ( id_upload: string, start: number, _options?: LiWEFetcherOptions ) => {
+	const res = await post( `/api/media/upload/chunk/add?id_upload=${id_upload}&start=${start}`, {}, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -80,8 +80,8 @@ export const media_upload_chunk_add = async ( id_upload: string, start: number )
  * @return folder: MediaFolder
  *
  */
-export const media_folder_create = async ( id_parent: string, name: string ) => {
-	const res = await post( `/api/media/folder/create`, { id_parent, name }, true );
+export const media_folder_create = async ( id_parent: string, name: string, _options?: LiWEFetcherOptions ) => {
+	const res = await post( `/api/media/folder/create`, { id_parent, name }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -101,8 +101,8 @@ export const media_folder_create = async ( id_parent: string, name: string ) => 
  * @return folder: MediaFolder
  *
  */
-export const media_folder_rename = async ( id_folder: string, name: string ) => {
-	const res = await patch( `/api/media/folder/rename`, { id_folder, name }, true );
+export const media_folder_rename = async ( id_folder: string, name: string, _options?: LiWEFetcherOptions ) => {
+	const res = await patch( `/api/media/folder/rename`, { id_folder, name }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -121,8 +121,8 @@ export const media_folder_rename = async ( id_folder: string, name: string ) => 
  * @return ok: boolean
  *
  */
-export const media_folder_delete = async ( id_folder: string ) => {
-	const res = await delete_( `/api/media/folder/delete`, { id_folder }, true );
+export const media_folder_delete = async ( id_folder: string, _options?: LiWEFetcherOptions ) => {
+	const res = await delete_( `/api/media/folder/delete`, { id_folder }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -140,8 +140,8 @@ export const media_folder_delete = async ( id_folder: string ) => {
  * @return folder: MediaFolder
  *
  */
-export const media_folder_root = async (  ) => {
-	const res = await get( `/api/media/folder/root`, {}, false );
+export const media_folder_root = async ( _options?: any ) => {
+	const res = await get( `/api/media/folder/root`, {}, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -161,8 +161,8 @@ export const media_folder_root = async (  ) => {
  * @return medias: Media
  *
  */
-export const media_list = async ( id_folders?: string[] ) => {
-	const res = await get( `/api/media/list`, { id_folders }, true );
+export const media_list = async ( id_folders?: string[], _options?: LiWEFetcherOptions ) => {
+	const res = await get( `/api/media/list`, { id_folders }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -179,8 +179,8 @@ export const media_list = async ( id_folders?: string[] ) => {
  * @return media: Media
  *
  */
-export const media_get = async ( id: string ) => {
-	const res = await get( `/api/media/get`, { id }, false );
+export const media_get = async ( id: string, _options?: LiWEFetcherOptions ) => {
+	const res = await get( `/api/media/get`, { id }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -201,8 +201,8 @@ export const media_get = async ( id: string ) => {
  * @return tree: MediaFolder
  *
  */
-export const media_folders_tree = async ( id_folder?: string ) => {
-	const res = await get( `/api/media/folders/tree`, { id_folder }, false );
+export const media_folders_tree = async ( id_folder?: string, _options?: LiWEFetcherOptions ) => {
+	const res = await get( `/api/media/folders/tree`, { id_folder }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -222,8 +222,8 @@ export const media_folders_tree = async ( id_folder?: string ) => {
  * @return deleted: int
  *
  */
-export const media_delete_items = async ( medias: string[] ) => {
-	const res = await delete_( `/api/media/delete/items`, { medias }, true );
+export const media_delete_items = async ( medias: string[], _options?: LiWEFetcherOptions ) => {
+	const res = await delete_( `/api/media/delete/items`, { medias }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -245,13 +245,13 @@ export const media_delete_items = async ( medias: string[] ) => {
  * @return media: Media
  *
  */
-export const media_upload = async ( title?: string, module?: string, id_folder?: string, tags?: string[] ) => {
+export const media_upload = async ( title?: string, module?: string, id_folder?: string, tags?: string[], _options?: LiWEFetcherOptions ) => {
 	const res = await post( `/api/media/upload`, { 
 		id_folder,
 		module,
 		tags,
 		title
-	 }, true );
+	 }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -276,7 +276,7 @@ export const media_upload = async ( title?: string, module?: string, id_folder?:
  * @return medias: Media
  *
  */
-export const media_search = async ( title?: string, name?: string, type?: string, tags?: string[], year?: number, skip: number = 0, rows: number = 50 ) => {
+export const media_search = async ( title?: string, name?: string, type?: string, tags?: string[], year?: number, skip: number = 0, rows: number = 50, _options?: LiWEFetcherOptions ) => {
 	const res = await get( `/api/media/search`, { 
 		name,
 		rows,
@@ -285,7 +285,7 @@ export const media_search = async ( title?: string, name?: string, type?: string
 		title,
 		type,
 		year
-	 }, true );
+	 }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -303,8 +303,8 @@ export const media_search = async ( title?: string, name?: string, type?: string
  * @return medias: Media
  *
  */
-export const media_get_latest = async ( skip: number = 0, rows: number = 50 ) => {
-	const res = await get( `/api/media/get/latest`, { skip, rows }, true );
+export const media_get_latest = async ( skip: number = 0, rows: number = 50, _options?: LiWEFetcherOptions ) => {
+	const res = await get( `/api/media/get/latest`, { skip, rows }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -325,8 +325,8 @@ export const media_get_latest = async ( skip: number = 0, rows: number = 50 ) =>
  * @return media: Media
  *
  */
-export const media_meta_update = async ( id: string, title?: string, tags?: string[] ) => {
-	const res = await patch( `/api/media/meta/update`, { id, title, tags }, true );
+export const media_meta_update = async ( id: string, title?: string, tags?: string[], _options?: LiWEFetcherOptions ) => {
+	const res = await patch( `/api/media/meta/update`, { id, title, tags }, _options?.skipError ? _options.skipError : false );
 
 	if (res.error) return res;
 
@@ -335,4 +335,22 @@ export const media_meta_update = async ( id: string, title?: string, tags?: stri
 	/*=== f2c_end media_meta_update ===*/
 
 	return res.media;
+};
+
+/**
+ * @param id - The media ID [opt]
+ *
+ * @return ok: boolean
+ *
+ */
+export const media_download = async ( id?: string, _options?: LiWEFetcherOptions ) => {
+	const res = await get( `/api/media/download?id=${id}`, {}, _options?.skipError ? _options.skipError : false );
+
+	if (res.error) return res;
+
+	/*=== f2c_start media_download ===*/
+
+	/*=== f2c_end media_download ===*/
+
+	return res.ok;
 };
