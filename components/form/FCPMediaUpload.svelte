@@ -45,7 +45,7 @@
 
 		const res = await media_get(v);
 
-		if (res.error) return;
+		if (res?.error) return;
 
 		media = res;
 	};
