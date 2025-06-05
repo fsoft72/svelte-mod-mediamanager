@@ -4,7 +4,6 @@
 	import { url_and_headers } from '$liwe3/utils/fetcher';
 	import type { TreeItem } from '$liwe3/utils/tree';
 	import SelectTree from '$liwe3/components/SelectTree.svelte';
-	import { addToast } from '$liwe3/stores/ToastStore.svelte';
 	import Button from '$liwe3/components/Button.svelte';
 	import TagInput from '$liwe3/components/TagInput.svelte';
 	import md5 from '$liwe3/utils/md5';
@@ -26,10 +25,12 @@
 
 		showUploadButton?: boolean;
 		maxFiles?: number;
+		required?: boolean;
 
 		onupdate?: (evt: UpdateEvent) => void;
 		ondone?: (files: number) => void;
 		oncompleted?: (name: string, id_upload: string) => void;
+		onerror?: (error: any) => void;
 	}
 
 	let {
@@ -41,6 +42,7 @@
 		anonymous = false,
 		maxFiles = 0,
 		showUploadButton = true, // Added new property for controlling the upload button visibility
+		required = false,
 		onupdate,
 		ondone,
 		oncompleted
@@ -64,8 +66,11 @@
 	let uploadedFiles: UploadedFile[] = $state([]); // Updated to use the UploadedFile type
 
 	export async function submit() {
-		if (files.length === 0) {
-			throw new Error('No files to upload');
+		if (files.length === 0 ) {
+			if ( required )
+				throw new Error('No files to upload');
+			else
+				return []; // return empty array if no files to upload
 		}
 
 		let totFiles = files.length;
@@ -93,11 +98,6 @@
 		currentFileIndex = 0;
 		uploadName = '';
 		uploadProgress = 0;
-
-		addToast({
-			type: 'success',
-			message: 'Files uploaded successfully'
-		});
 
 		ondone && ondone(totFiles);
 
@@ -130,10 +130,7 @@
 		const { id_upload, error } = await response.json();
 
 		if (error) {
-			addToast({
-				type: 'error',
-				message: error
-			});
+			onerror && onerror(error);
 			return null;
 		}
 
@@ -195,10 +192,7 @@
 	const _add_files = (_files: File[]) => {
 		// First check if we're already at or above the max limit
 		if (maxFiles > 0 && files.length >= maxFiles) {
-			addToast({
-				type: 'error',
-				message: `Maximum of ${maxFiles} file${maxFiles === 1 ? '' : 's'} allowed`
-			});
+			onerror && onerror(`Maximum of ${maxFiles} files already reached`);
 			return files;
 		}
 
@@ -221,10 +215,7 @@
 
 		// Show message if files were skipped due to limit
 		if (maxFiles > 0 && _files.length > remainingSlots) {
-			addToast({
-				type: 'info',
-				message: `Only added ${addedCount} file(s). Maximum limit of ${maxFiles} file${maxFiles === 1 ? '' : 's'} reached.`
-			});
+			console.warn(`Only added ${addedCount} file(s). Maximum limit of ${maxFiles} file${maxFiles === 1 ? '' : 's'} reached.`);
 		}
 
 		return updatedFiles;
@@ -286,7 +277,12 @@
 	<div class="container">
 		<p>
 			Drag and drop files here or
-			<button onclick={() => uploadField?.click()} class="btn btn-link">browse</button>
+			<button onclick={(evt: any) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+
+				uploadField?.click()
+			}} class="btn btn-link">browse</button>
 		</p>
 		<div class="preview">
 			{#each files as file (file.name)}

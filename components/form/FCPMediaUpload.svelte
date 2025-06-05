@@ -65,7 +65,7 @@
 
 <input type="hidden" {name} bind:value />
 <div class="fcp-upload-cont">
-	<Upload bind:this={upload} showUploadButton={false} />
+	<Upload bind:this={upload} showUploadButton={false} required={field.required}/>
 </div>
 
 <style>
