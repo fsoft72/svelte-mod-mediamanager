@@ -43,7 +43,7 @@ export const media_upload_chunk_start = async ( id_folder: string, filename: str
 
 	/*=== f2c_end media_upload_chunk_start ===*/
 
-	return res.id_upload;
+	return res.data;
 };
 
 /**
@@ -68,7 +68,7 @@ export const media_upload_chunk_add = async ( id_upload: string, start: number, 
 
 	/*=== f2c_end media_upload_chunk_add ===*/
 
-	return res.bytes;
+	return res.data;
 };
 
 /**
@@ -89,7 +89,7 @@ export const media_folder_create = async ( id_parent: string, name: string, _opt
 
 	/*=== f2c_end media_folder_create ===*/
 
-	return res.folder;
+	return res.data;
 };
 
 /**
@@ -110,7 +110,7 @@ export const media_folder_rename = async ( id_folder: string, name: string, _opt
 
 	/*=== f2c_end media_folder_rename ===*/
 
-	return res.folder;
+	return res.data;
 };
 
 /**
@@ -130,7 +130,7 @@ export const media_folder_delete = async ( id_folder: string, _options?: LiWEFet
 
 	/*=== f2c_end media_folder_delete ===*/
 
-	return res.ok;
+	return res.data;
 };
 
 /**
@@ -149,7 +149,7 @@ export const media_folder_root = async ( _options?: any ) => {
 
 	/*=== f2c_end media_folder_root ===*/
 
-	return res.folder;
+	return res.data;
 };
 
 /**
@@ -170,7 +170,7 @@ export const media_list = async ( id_folders?: string[], _options?: LiWEFetcherO
 
 	/*=== f2c_end media_list ===*/
 
-	return res.medias;
+	return res.data;
 };
 
 /**
@@ -188,7 +188,7 @@ export const media_get = async ( id: string, _options?: LiWEFetcherOptions ) => 
 
 	/*=== f2c_end media_get ===*/
 
-	return res.media;
+	return res.data;
 };
 
 /**
@@ -210,7 +210,7 @@ export const media_folders_tree = async ( id_folder?: string, _options?: LiWEFet
 
 	/*=== f2c_end media_folders_tree ===*/
 
-	return res.tree;
+	return res.data;
 };
 
 /**
@@ -231,7 +231,7 @@ export const media_delete_items = async ( medias: string[], _options?: LiWEFetch
 
 	/*=== f2c_end media_delete_items ===*/
 
-	return res.deleted;
+	return res.data;
 };
 
 /**
@@ -259,7 +259,7 @@ export const media_upload = async ( title?: string, module?: string, id_folder?:
 
 	/*=== f2c_end media_upload ===*/
 
-	return res.media;
+	return res.data;
 };
 
 /**
@@ -293,7 +293,7 @@ export const media_search = async ( title?: string, name?: string, type?: string
 
 	/*=== f2c_end media_search ===*/
 
-	return res.medias;
+	return res.data;
 };
 
 /**
@@ -312,7 +312,7 @@ export const media_get_latest = async ( skip: number = 0, rows: number = 50, _op
 
 	/*=== f2c_end media_get_latest ===*/
 
-	return res.medias;
+	return res.data;
 };
 
 /**
@@ -334,7 +334,7 @@ export const media_meta_update = async ( id: string, title?: string, tags?: stri
 
 	/*=== f2c_end media_meta_update ===*/
 
-	return res.media;
+	return res.data;
 };
 
 /**
@@ -352,5 +352,5 @@ export const media_download = async ( id?: string, _options?: LiWEFetcherOptions
 
 	/*=== f2c_end media_download ===*/
 
-	return res.ok;
+	return res.data;
 };
